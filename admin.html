@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - B Educational Consultancy</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .login-card h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .login-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-input {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .admin-panel {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .admin-panel.authenticated {
+            display: block;
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+
+        .admin-panel.authenticated + .bottom-nav {
+            display: flex;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .admin-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .admin-header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .students-section {
+            padding: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .student-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .section-header h2 {
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .search-box {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            width: 300px;
+            font-size: 1rem;
+        }
+        
+        .students-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .table-content {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .student-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            align-items: center;
+        }
+        
+        .student-row:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .student-row:hover {
+            background: #e3f2fd;
+        }
+        
+        .student-data {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        
+        .course-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-new {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status-contacted {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-enrolled {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e6ed;
+            display: none;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+            min-width: 60px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Student Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 120px;
+            margin-right: 15px;
+        }
+
+        .detail-value {
+            color: #555;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .detail-value.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Mobile Responsive */
+        /* Phone Section Styles */
+        .phone-section {
+            padding: 2rem;
+            background: white;
+        }
+
+        .phone-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .phone-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .phone-stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .phone-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .phone-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            align-items: center;
+        }
+
+        .phone-row:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .phone-row:hover {
+            background: #e3f2fd;
+        }
+
+        .phone-data {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .phone-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .call-btn {
+            background: #28a745;
+        }
+
+        .call-btn:hover {
+            background: #218838;
+        }
+
+        .whatsapp-btn {
+            background: #25d366;
+        }
+
+        .whatsapp-btn:hover {
+            background: #1ea952;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding-bottom: 80px; /* Space for bottom nav */
+            }
+
+            .student-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .search-box {
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .detail-row {
+                flex-direction: column;
+            }
+
+            .detail-label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+
+            .bottom-nav {
+                padding: 8px 0;
+            }
+
+            .nav-item {
+                padding: 6px 8px;
+                min-width: 50px;
+            }
+
+            .nav-item i {
+                font-size: 18px;
+            }
+
+            .nav-item span {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                margin: 5% auto;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .login-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .login-card h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Login Card -->
+        <div class="login-card" id="loginCard">
+            <h1><i class="fas fa-user-shield"></i> Welcome Back Buxi Sahab</h1>
+            <p>B Educational Consultancy - Admin Access</p>
+            <form class="login-form" id="loginForm">
+                <input type="email" class="login-input" id="emailInput" placeholder="Enter Admin Email" required>
+                <input type="password" class="login-input" id="passwordInput" placeholder="Enter Admin Password" required>
+                <input type="password" class="login-input" id="passkeyInput" placeholder="Enter Passkey" required>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+
+        <!-- Admin Panel (Hidden until authenticated) -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-header">
+                <h1><i class="fas fa-user-shield"></i> Admin Panel</h1>
+                <p>B Educational Consultancy - Student Management System</p>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="newStudents">0</div>
+                    <div class="stat-label">New This Week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="engineeringStudents">0</div>
+                    <div class="stat-label">Engineering</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="medicalStudents">0</div>
+                    <div class="stat-label">Medical</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="managementStudents">0</div>
+                    <div class="stat-label">Management & IT</div>
+                </div>
+            </div>
+            
+            <div class="students-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> Student Records</h2>
+                <div class="student-controls">
+                    <input type="text" class="search-box" id="searchBox" placeholder="Search students...">
+                    <select class="filter-select" id="courseFilter">
+                        <option value="">All Courses</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="medical">Medical</option>
+                        <option value="management">Management & IT</option>
+                        <option value="arts">Arts & Science</option>
+                    </select>
+                </div>
+            </div>
+                
+                <div class="students-table">
+                    <div class="table-header">
+                        <div class="student-row">
+                            <div>Name</div>
+                            <div>Email</div>
+                            <div>Phone</div>
+                            <div>Course Interest</div>
+                            <div>Stream</div>
+                            <div>Actions</div>
+                        </div>
+                    </div>
+                    <div class="table-content" id="studentsTable">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Loading students...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="showDashboard()">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="showStudents()">
+            <i class="fas fa-users"></i>
+            <span>Students</span>
+        </div>
+        <div class="nav-item" onclick="showStats()">
+            <i class="fas fa-chart-bar"></i>
+            <span>Stats</span>
+        </div>
+        <div class="nav-item" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user"></i> Student Details</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Student details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue, off } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCZXH17hU0Iez2tIWuCBejd4bXzmb_YJdk",
+            authDomain: "beducational-ef1ec.firebaseapp.com",
+            databaseURL: "https://beducational-ef1ec-default-rtdb.firebaseio.com",
+            projectId: "beducational-ef1ec",
+            storageBucket: "beducational-ef1ec.firebasestorage.app",
+            messagingSenderId: "439425155235",
+            appId: "1:439425155235:web:72b5907fbe67d98572ff16"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Admin UID - Replace with your actual UID
+        const ADMIN_UID = "pvcDFqCHopNBQfeHSYL1472k2DP2"; // You need to replace this with your actual UID
+
+        let studentsData = [];
+        let filteredStudents = [];
+
+        // Configuration data (disguised)
+        const configData = "MFRGG43UMVZSAYLTON2GQZJAMVZSAYLTON2GQZJAMVZSAYLTON2GQZJA==";
+        const userSettings = "bGV2ZWw9M3x0eXBlPWFkbWlufG1vZGU9cHJvZHVjdGlvbg==";
+        const systemConfig = "V1c1V05HRlZRWGhQVkVGNA=="; // Triple base64 encoded buxi@1901
+        
+        // Triple Base64 decryption function
+        function decryptPasskey() {
+            try {
+                // First decode base64
+                let decoded = atob(systemConfig);
+                // Then decode base64 again
+                decoded = atob(decoded);
+                // Finally decode base64 third time
+                decoded = atob(decoded);
+                return decoded;
+            } catch (error) {
+                console.error("Decryption error:", error);
+                return null;
+            }
+        }
+        
+        // Validate passkey function
+        function validatePasskey(enteredKey) {
+            const actualPasskey = decryptPasskey();
+            return actualPasskey && enteredKey === actualPasskey;
+        }
+
+        // Login form handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const passkey = document.getElementById('passkeyInput').value;
+            
+            // Validate all fields are filled
+            if (!email || !password || !passkey) {
+                alert("Please fill in all fields!");
+                return;
+            }
+            
+            // First step: Firebase Authentication
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Firebase authentication successful, now check passkey
+                    console.log("Firebase authentication successful");
+                    
+                    if (validatePasskey(passkey)) {
+                        // Both authentications successful
+                        document.getElementById('loginCard').style.display = 'none';
+                        document.getElementById('adminPanel').classList.add('authenticated');
+                        document.querySelector('.bottom-nav').style.display = 'flex';
+                        loadStudents();
+                    } else {
+                        alert("Invalid passkey! Please try again.");
+                        document.getElementById('passkeyInput').value = '';
+                        document.getElementById('passkeyInput').focus();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Firebase authentication error:", error);
+                    alert("Invalid email or password! Please try again.");
+                    document.getElementById('emailInput').value = '';
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passkeyInput').value = '';
+                    document.getElementById('emailInput').focus();
+                });
+        });
+
+        // Initialize - show login card
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('adminPanel').classList.remove('authenticated');
+
+        function loadStudents() {
+            console.log("Loading students from Firebase...");
+            const studentsRef = ref(database, 'students');
+            
+            onValue(studentsRef, (snapshot) => {
+                console.log("Firebase snapshot received:", snapshot);
+                const data = snapshot.val();
+                console.log("Data from Firebase:", data);
+                
+                if (data) {
+                    studentsData = Object.entries(data).map(([key, value]) => ({
+                        id: key,
+                        ...value
+                    }));
+                    console.log("Processed students data:", studentsData);
+                    filteredStudents = [...studentsData];
+                    updateStats();
+                    displayStudents();
+                } else {
+                    console.log("No data found in Firebase");
+                    document.getElementById('studentsTable').innerHTML = 
+                        '<div class="no-data"><i class="fas fa-users"></i><br>No students found in database</div>';
+                }
+            }, (error) => {
+                console.error("Firebase error:", error);
+                document.getElementById('studentsTable').innerHTML = 
+                    '<div class="no-data"><i class="fas fa-exclamation-triangle"></i><br>Error loading data: ' + error.message + '</div>';
+            });
+        }
+
+        function updateStats() {
+            const total = studentsData.length;
+            const now = new Date();
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            const newThisWeek = studentsData.filter(student => {
+                const studentDate = new Date(student.timestamp);
+                return studentDate >= oneWeekAgo;
+            }).length;
+            
+            const engineering = studentsData.filter(s => s.courseInterest === 'engineering').length;
+            const medical = studentsData.filter(s => s.courseInterest === 'medical').length;
+            const management = studentsData.filter(s => s.courseInterest === 'management').length;
+            
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('newStudents').textContent = newThisWeek;
+            document.getElementById('engineeringStudents').textContent = engineering;
+            document.getElementById('medicalStudents').textContent = medical;
+            document.getElementById('managementStudents').textContent = management;
+        }
+
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const courseFilter = document.getElementById('courseFilter').value;
+            
+            filteredStudents = studentsData.filter(student => {
+                const matchesSearch = !searchTerm || 
+                    (student.name && student.name.toLowerCase().includes(searchTerm)) ||
+                    (student.email && student.email.toLowerCase().includes(searchTerm)) ||
+                    (student.phone && student.phone.includes(searchTerm)) ||
+                    (student.courseInterest && student.courseInterest.toLowerCase().includes(searchTerm)) ||
+                    (student.stream && student.stream.toLowerCase().includes(searchTerm));
+                const matchesCourse = !courseFilter || student.courseInterest === courseFilter;
+                
+                return matchesSearch && matchesCourse;
+            });
+            displayStudents();
+        });
+
+        // Course filter functionality
+        document.getElementById('courseFilter').addEventListener('change', (e) => {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const courseFilter = e.target.value;
+            
+            filteredStudents = studentsData.filter(student => {
+                const matchesSearch = !searchTerm || 
+                    (student.name && student.name.toLowerCase().includes(searchTerm)) ||
+                    (student.email && student.email.toLowerCase().includes(searchTerm)) ||
+                    (student.phone && student.phone.includes(searchTerm)) ||
+                    (student.courseInterest && student.courseInterest.toLowerCase().includes(searchTerm)) ||
+                    (student.stream && student.stream.toLowerCase().includes(searchTerm));
+                const matchesCourse = !courseFilter || student.courseInterest === courseFilter;
+                
+                return matchesSearch && matchesCourse;
+            });
+            displayStudents();
+        });
+
+        // Mobile Navigation Functions
+        window.showDashboard = function() {
+            setActiveNav(0);
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.showStudents = function() {
+            setActiveNav(1);
+            // Scroll to students section
+            document.querySelector('.students-section').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        window.showStats = function() {
+            setActiveNav(2);
+            // Scroll to stats section
+            document.querySelector('.stats-grid').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        function setActiveNav(index) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Student Detail Modal Functions
+        window.showStudentDetails = function(student) {
+            const modal = document.getElementById('studentModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const formatDate = (dateString) => {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            };
+
+            modalBody.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Name:</div>
+                    <div class="detail-value">${student.name || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value">${student.email || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Phone:</div>
+                    <div class="detail-value">${student.phone || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Course Interest:</div>
+                    <div class="detail-value">${student.courseInterest || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Stream:</div>
+                    <div class="detail-value">${student.stream || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Message:</div>
+                    <div class="detail-value">${student.message || 'No message provided'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Source:</div>
+                    <div class="detail-value">${student.source || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Submitted:</div>
+                    <div class="detail-value">${formatDate(student.timestamp)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <span class="status-badge status-new">New Inquiry</span>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('studentModal').style.display = 'none';
+        };
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('studentModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        // Update displayStudents to make rows clickable
+        function displayStudents() {
+            const tableContent = document.getElementById('studentsTable');
+            
+            if (filteredStudents.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-users"></i><br>
+                        No students found
+                    </div>
+                `;
+                return;
+            }
+            
+            const html = filteredStudents.map(student => `
+                <div class="student-row">
+                    <div class="student-data" onclick="showStudentDetails(${JSON.stringify(student).replace(/"/g, '&quot;')})" style="cursor: pointer;">${student.name || 'N/A'}</div>
+                    <div class="student-data">${student.email || 'N/A'}</div>
+                    <div class="student-data">${student.phone || 'N/A'}</div>
+                    <div class="student-data">
+                        <span class="course-badge">${student.courseInterest || 'N/A'}</span>
+                    </div>
+                    <div class="student-data">${student.stream || 'N/A'}</div>
+                    <div class="student-data">
+                        <div class="student-actions">
+                            <button class="action-btn call-btn" onclick="callStudent('${student.phone}')" title="Call">
+                                <i class="fas fa-phone"></i>
+                            </button>
+                            <button class="action-btn whatsapp-btn" onclick="whatsappStudent('${student.phone}')" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            <button class="action-btn" onclick="showStudentDetails(${JSON.stringify(student).replace(/"/g, '&quot;')})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            tableContent.innerHTML = html;
+        }
+
+
+        // Call and WhatsApp functions
+        window.callStudent = function(phone) {
+            window.open(`tel:${phone}`, '_self');
+        };
+
+        window.whatsappStudent = function(phone) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            window.open(`https://wa.me/91${cleanPhone}`, '_blank');
+        };
+
+        // Logout function
+        window.logout = function() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Sign out from Firebase
+                signOut(auth).then(() => {
+                    console.log("Firebase sign out successful");
+                }).catch((error) => {
+                    console.error("Firebase sign out error:", error);
+                });
+                
+                // Reset form and show login card
+                document.getElementById('loginCard').style.display = 'block';
+                document.getElementById('adminPanel').classList.remove('authenticated');
+                document.querySelector('.bottom-nav').style.display = 'none';
+                
+                // Reset form fields
+                document.getElementById('emailInput').value = '';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passkeyInput').value = '';
+                
+                document.getElementById('emailInput').focus();
+            }
+        };
+    </script>
+</body>
+</html>

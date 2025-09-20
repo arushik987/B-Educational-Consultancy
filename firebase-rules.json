@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "students": {
+      ".read": "true",
+      ".write": "true"
+    },
+    "admin": {
+      ".read": "auth != null && auth.uid == 'pvcDFqCHopNBQfeHSYL1472k2DP2'",
+      ".write": "auth != null && auth.uid == 'pvcDFqCHopNBQfeHSYL1472k2DP2'"
+    }
+  }
+}
